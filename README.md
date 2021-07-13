@@ -12,3 +12,6 @@ you just install Python 3 and you are amazing as much as it's possible.
 
 # Execution
 if you able to execute windows batch file, you are truly compatible with the busy-lemon app
+
+# Future plans and features
+future what? this app is perfect already and YOU and ME have no time to waste time on this, it already works
