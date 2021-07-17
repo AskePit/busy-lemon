@@ -134,12 +134,14 @@ def init():
 			
 			l = l.strip()
 			
-			if state == ATTRIBUTES:
-				d = l.split(' ')
-				attributes.append(Attribute(int(d[0]), d[1]))
-			elif state == ACTIVITIES:
+			if state == ATTRIBUTES or state == ACTIVITIES:
 				spaceIdx = l.find(' ')
-				activities.append(Activity(int(l[0:spaceIdx]), l[spaceIdx + 1:]))
+				id = int(l[0:spaceIdx])
+				name = l[spaceIdx + 1:]
+				if state == ATTRIBUTES:
+					attributes.append(Attribute(id, name))
+				elif state == ACTIVITIES:
+					activities.append(Activity(id, name))
 			elif state == ACTIVITY_ATTRIBUTES:
 				activities[-1].attrs.append(int(l))
 
