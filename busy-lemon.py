@@ -3,7 +3,7 @@ import random
 from sys import exit
 from random import randint
 
-class Attribute:
+class Tag:
 	def __init__(self, id, name):
 		self.id = id
 		self.name = name
@@ -14,13 +14,13 @@ class Activity:
 		self.name = name
 		self.attrs = []
 
-attributes = []
+tags = []
 activities = []
 
 DBG = False
 
-def getAttribute(attrId):
-	for a in attributes:
+def getTag(attrId):
+	for a in tags:
 		if a.id == attrId:
 			return a
 	return None
@@ -34,7 +34,7 @@ def getActivity(id):
 class History:
 	def __init__(self):
 		self.done = []
-		historyCandidate = None
+		self.historyCandidate = None
 		
 		self.load()
 		self.normalize()
@@ -53,18 +53,18 @@ class History:
 					self.done.append(int(activityStr))
 			
 			if l2 and not l2.isspace():
-				historyCandidate = int(l2)
+				self.historyCandidate = int(l2)
 				
 				while True:
-					print('Did you finish', getActivity(historyCandidate).name + '? (y/n)')
+					print('Did you finish', getActivity(self.historyCandidate).name + '? (y/n)')
 					
 					answer = input()
 					if answer == 'y':
-						self.done.append(historyCandidate)
-						historyCandidate = None
+						self.done.append(self.historyCandidate)
+						self.historyCandidate = None
 						break
 					elif answer == 'n':
-						historyCandidate = None
+						self.historyCandidate = None
 						break
 					else:
 						continue
@@ -96,21 +96,21 @@ class History:
 		for a in self.done:
 			print(a)
 	
-	def filter(self, attributeId = None):
-		if attributeId == None:
+	def filter(self, tagId = None):
+		if tagId == None:
 			return self.done
 		else:
 			res = []
 			for aId in self.done:
 				activity = getActivity(aId)
-				if activity and attributeId in activity.attrs:
+				if activity and tagId in activity.attrs:
 					res.append(aId)
 			return res
 
 def init():
-	ATTRIBUTES = 1
+	TAGS = 1
 	ACTIVITIES = 2
-	ACTIVITY_ATTRIBUTES = 3
+	ACTIVITY_TAGS = 3
 
 	with io.open('topics.txt', encoding='utf-8') as f:
 		data = f.readlines()
@@ -120,55 +120,55 @@ def init():
 		for l in data:
 			if l.isspace():
 				continue
-			if '[Attributes]' in l:
-				state = ATTRIBUTES
+			if '[Tags]' in l:
+				state = TAGS
 				continue
 			if '[Activities]' in l:
 				state = ACTIVITIES
 				continue
 
 			if '\t' in l:
-				state = ACTIVITY_ATTRIBUTES
-			elif state == ACTIVITY_ATTRIBUTES:
+				state = ACTIVITY_TAGS
+			elif state == ACTIVITY_TAGS:
 				state = ACTIVITIES
 			
 			l = l.strip()
 			
-			if state == ATTRIBUTES or state == ACTIVITIES:
+			if state == TAGS or state == ACTIVITIES:
 				spaceIdx = l.find(' ')
 				id = int(l[0:spaceIdx])
 				name = l[spaceIdx + 1:]
-				if state == ATTRIBUTES:
-					attributes.append(Attribute(id, name))
+				if state == TAGS:
+					tags.append(Tag(id, name))
 				elif state == ACTIVITIES:
 					activities.append(Activity(id, name))
-			elif state == ACTIVITY_ATTRIBUTES:
+			elif state == ACTIVITY_TAGS:
 				activities[-1].attrs.append(int(l))
 
 init()
 history = History()
 
-def chooseAttribute():
+def chooseTag():
 	print("\nChoose activity topic:")
 	print("0 Any")
-	for a in attributes:
+	for a in tags:
 		print(a.id, a.name)
 	return int(input())
 
-def chooseActivity(attributeId):
+def chooseActivity(tagId):
 	
-	choosenAttribute = getAttribute(attributeId)
-	if choosenAttribute == None:
-		attributeId = None
+	choosenTag = getTag(tagId)
+	if choosenTag == None:
+		tagId = None
 	
-	allowedActivities = history.filter(attributeId) # in history ascending order
+	allowedActivities = history.filter(tagId) # in history ascending order
 	if DBG:
 		print('allowedActivities', allowedActivities)
 	
 	nonregisteredActivities = []
 	for a in activities:
 		if(
-			(choosenAttribute != None and choosenAttribute.id not in a.attrs)
+			(choosenTag != None and choosenTag.id not in a.attrs)
 			or a.id in allowedActivities
 		):
 			continue
@@ -212,8 +212,8 @@ def chooseActivity(attributeId):
 	else:
 		return None
 
-chosenAttribute = chooseAttribute()
-chosenActivity = chooseActivity(chosenAttribute);
+chosenTag = chooseTag()
+chosenActivity = chooseActivity(chosenTag);
 
 if chosenActivity == None:
 	print('\nNo activity! Try again')
