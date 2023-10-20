@@ -48,10 +48,11 @@ class History:
 			l1 = data[0].strip()
 			l2 = data[1].strip() if len(data) > 1 else None
 			
-			for activityStr in l1.split(' '):
-				if activityStr and not activityStr.isspace():
-					self.done.append(int(activityStr))
-			
+			self.done = [
+				int(activity) for activity in l1.split(' ')\
+					if activity and not activity.isspace()
+			]
+
 			if l2 and not l2.isspace():
 				self.historyCandidate = int(l2)
 				
@@ -100,12 +101,7 @@ class History:
 		if tagId == None:
 			return self.done
 		else:
-			res = []
-			for aId in self.done:
-				activity = getActivity(aId)
-				if activity and tagId in activity.tags:
-					res.append(aId)
-			return res
+			return [id for id in self.done if (a := getActivity(id)) if tagId in a.tags]
 
 def init():
 	TAGS = 1
@@ -165,14 +161,12 @@ def chooseActivity(tagId):
 	if DBG:
 		print('allowedActivities', allowedActivities)
 	
-	nonregisteredActivities = []
-	for a in activities:
+	nonregisteredActivities = [a.id for a in activities
 		if(
-			(choosenTag != None and choosenTag.id not in a.tags)
-			or a.id in allowedActivities
-		):
-			continue
-		nonregisteredActivities.append(a.id)
+			(choosenTag != None and choosenTag.id in a.tags)
+			and a.id not in allowedActivities
+		)
+	]
 	
 	random.shuffle(nonregisteredActivities)
 	if DBG:
