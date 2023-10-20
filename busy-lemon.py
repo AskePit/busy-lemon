@@ -12,7 +12,7 @@ class Activity:
 	def __init__(self, id, name):
 		self.id = id
 		self.name = name
-		self.attrs = []
+		self.tags = []
 
 tags = []
 activities = []
@@ -103,7 +103,7 @@ class History:
 			res = []
 			for aId in self.done:
 				activity = getActivity(aId)
-				if activity and tagId in activity.attrs:
+				if activity and tagId in activity.tags:
 					res.append(aId)
 			return res
 
@@ -143,7 +143,7 @@ def init():
 				elif state == ACTIVITIES:
 					activities.append(Activity(id, name))
 			elif state == ACTIVITY_TAGS:
-				activities[-1].attrs.append(int(l))
+				activities[-1].tags.append(int(l))
 
 init()
 history = History()
@@ -168,7 +168,7 @@ def chooseActivity(tagId):
 	nonregisteredActivities = []
 	for a in activities:
 		if(
-			(choosenTag != None and choosenTag.id not in a.attrs)
+			(choosenTag != None and choosenTag.id not in a.tags)
 			or a.id in allowedActivities
 		):
 			continue
