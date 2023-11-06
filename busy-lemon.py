@@ -17,7 +17,7 @@ class Activity:
 tags = []
 activities = []
 
-DBG = False
+DBG = True
 
 def getTag(attrId):
 	for a in tags:
@@ -163,7 +163,7 @@ def chooseActivity(tagId):
 	
 	nonregisteredActivities = [a.id for a in activities
 		if(
-			(choosenTag != None and choosenTag.id in a.tags)
+			(choosenTag == None or choosenTag.id in a.tags)
 			and a.id not in allowedActivities
 		)
 	]
