@@ -17,7 +17,7 @@ class Activity:
 tags = []
 activities = []
 
-DBG = True
+DBG = False
 
 def getTag(attrId):
 	for a in tags:
