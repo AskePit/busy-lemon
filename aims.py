@@ -1,9 +1,13 @@
 from dataclasses import dataclass
 
+from utils import IdPool
+
 TAB = '    '
 
 class Aim:
     name: str
+    id: int
+
     children: list['Aim']
     parent: 'Aim'
 
@@ -37,9 +41,12 @@ class Aim:
 
 class AimsTree:
     root: Aim
+    idPool: IdPool
 
     def __init__(self) -> None:
+        self.idPool = IdPool()
         self.root = Aim('root')
+        self.root.id = IdPool.yieldId()
 
     def __str__(self) -> str:
         return self.root.printInTree(0)
